@@ -5,12 +5,17 @@ import 'flutter_tts.dart';
 class PopuTtsService {
   static PopuTtsService instance = PopuTtsService();
 
-  FlutterTts tts = FlutterTts();
+  FlutterTts? tts;
   List<dynamic> languages = [];
 
   Future<void> init(String language) async {
-    await tts.setLanguage(language);
-    languages = await tts.getLanguages as List<String>;
+    tts = FlutterTts();
+    await tts?.setLanguage(language);
+    languages = await tts?.getLanguages as List<String>;
+  }
+
+  Future<void> speak(String text) async {
+    await tts?.speak(text);
   }
 }
 
