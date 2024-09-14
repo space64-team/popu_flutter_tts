@@ -19,11 +19,11 @@ class PopuTtsService {
     this.language = language;
     await tts?.setLanguage(language);
     currentVoice = PopuTtsPreferences.ttsVoice.get();
-    Future.delayed(Duration(milliseconds: 200), () => {
+    Future.delayed(Duration(milliseconds: 500), () => {
       getVoices().then((voices) => {
         if (voices.contains(currentVoice)) {
           changeVoice(currentVoice)
-        } else {
+        } else if (voices.isNotEmpty) {
           changeVoice(voices.first)
         }
       })
