@@ -5,15 +5,21 @@ import 'flutter_tts.dart';
 class PopuTtsService {
   static PopuTtsService instance = PopuTtsService();
 
-  FlutterTts? tts;
-  List<dynamic> languages = [];
-
   Future<void> init(String language) async {
     tts = FlutterTts();
     await tts?.setLanguage(language);
-    Future.delayed(const Duration(milliseconds: 500), () async {
-      languages = await tts?.getLanguages as List<dynamic>;
-    });
+  }
+
+  FlutterTts? tts;
+
+  Future<List<PopuTtsSupportedLanguage>> getTroubleshootData() async {
+    List<PopuTtsSupportedLanguage> ret = [];
+    List<dynamic> languages = await tts?.getLanguages as List<dynamic>;
+    for (var l in languages) {
+      ret.add(PopuTtsSupportedLanguage(l.toString()));
+    }
+    ;
+    return ret;
   }
 
   Future<void> speak(String text) async {
@@ -21,28 +27,46 @@ class PopuTtsService {
   }
 }
 
-class PopuTtsTroubleshootScreen extends StatelessWidget {
+class PopuTtsSupportedLanguage {
+  final String langCode;
+
+  PopuTtsSupportedLanguage(this.langCode);
+}
+
+class PopuTtsTroubleshootScreen extends StatefulWidget {
+  @override
+  State<PopuTtsTroubleshootScreen> createState() =>
+      _PopuTtsTroubleshootScreenState();
+}
+
+class _PopuTtsTroubleshootScreenState extends State<PopuTtsTroubleshootScreen> {
+  List<PopuTtsSupportedLanguage> _data = [];
+
+  @override
+  void initState() {
+    super.initState();
+    PopuTtsService.instance.getTroubleshootData().then((v) => {
+          setState(() {
+            _data = v;
+          })
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text('Tts')),
         body: SizedBox(
             height: 500,
-            child: GridView.count(
-              crossAxisCount: 4,
-              childAspectRatio: 1,
-              // Number of columns in the grid
-              padding: const EdgeInsets.all(16.0),
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              children: PopuTtsService.instance.languages.map((x) =>
-                  _buildGridItem(context, x.toString())
-              ).toList(),
+            child: ListView(
+              padding: const EdgeInsets.all(8),
+              children: _data
+                  .map((x) => _buildGridItem(context, x.langCode))
+                  .toList(),
             )));
   }
 
-  Widget _buildGridItem(
-      BuildContext context, String language) {
+  Widget _buildGridItem(BuildContext context, String language) {
     return Container(
         decoration: BoxDecoration(
           color: Colors.blueAccent,
@@ -56,7 +80,6 @@ class PopuTtsTroubleshootScreen extends StatelessWidget {
               textAlign: TextAlign.center,
             )
           ]),
-        )
-    );
+        ));
   }
 }
