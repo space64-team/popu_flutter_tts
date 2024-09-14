@@ -10,6 +10,7 @@ class PopuTtsPreferences {
 class PopuTtsService {
   static PopuTtsService instance = PopuTtsService();
 
+  bool firstSetup = false;
   String language = "";
   String currentVoice = "";
   FlutterTts? tts;
@@ -19,15 +20,19 @@ class PopuTtsService {
     this.language = language;
     await tts?.setLanguage(language);
     currentVoice = PopuTtsPreferences.ttsVoice.get();
-    Future.delayed(Duration(milliseconds: 500), () => {
-      getVoices().then((voices) => {
-        if (voices.contains(currentVoice)) {
-          changeVoice(currentVoice)
-        } else if (voices.isNotEmpty) {
-          changeVoice(voices.first)
-        }
-      })
-    });
+  }
+
+  Future<void> _firstSetup() async {
+    if (firstSetup) {
+      return;
+    }
+    var voices = await getVoices();
+    if (voices.contains(currentVoice)) {
+      changeVoice(currentVoice);
+    } else if (voices.isNotEmpty) {
+      changeVoice(voices.first);
+    }
+    firstSetup = true;
   }
 
   Future<List<String>> getVoices() async {
@@ -68,6 +73,7 @@ class PopuTtsService {
   }
 
   Future<void> speak(String text) async {
+    await _firstSetup();
     await tts?.speak(text);
   }
 
