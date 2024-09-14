@@ -6,6 +6,7 @@ class PopuTtsService {
   static PopuTtsService instance = PopuTtsService();
 
   String language = "";
+  String? currentVoice;
   FlutterTts? tts;
 
   Future<void> init(String language) async {
@@ -56,6 +57,7 @@ class PopuTtsService {
   }
 
   void changeVoice(String voice) async {
+    currentVoice = voice;
     await tts?.setVoice({"name": voice, "locale": language});
   }
 }
@@ -155,6 +157,10 @@ class _PopuVoiceChangeDialogState extends State<PopuVoiceChangeDialog> {
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
               title: Text(_voices[index]),
+              trailing: _voices[index] == PopuTtsService.instance.currentVoice ? Icon(
+                Icons.check, // This is the checkmark icon
+                color: Colors.green, // You can set the color of the checkmark
+              ) : null,
               onTap: () {
                 _changeVoice(_voices[index]);
                 Navigator.of(context).pop();
