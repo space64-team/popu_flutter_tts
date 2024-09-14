@@ -33,7 +33,7 @@ flutter:
         fileName: flutter_tts_web.dart
 
 environment:
-  sdk: ">=2.15.0 <4.0.0"
-  flutter: ">=1.22.0"
+  sdk: '>=3.3.0-215.0.dev <4.0.0'
+  flutter: ">=1.17.0"
 dev_dependencies:
   lints: ^3.0.0
