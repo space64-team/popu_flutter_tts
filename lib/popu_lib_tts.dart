@@ -15,13 +15,16 @@ class PopuTtsService {
 
   Future<List<PopuTtsSupportedLanguage>> getTroubleshootData() async {
     List<PopuTtsSupportedLanguage> ret = [];
-    var languages = await tts?.getLanguages as List<dynamic>;
-    PopuLogging.logger.w(languages);
+    var lRaw = await tts?.getLanguages;
+    var vRaw = await tts?.getVoices;
+    PopuLogging.logger.w('Languages $lRaw');
+    PopuLogging.logger.w('Voices $vRaw');
+    var languages = lRaw as List<dynamic>;
+    
     for (var l in languages) {
       ret.add(PopuTtsSupportedLanguage(l.toString()));
     }
-    var voices = await tts?.getVoices as List<Map<dynamic, dynamic>>;
-    PopuLogging.logger.w(voices);
+    var voices = vRaw as List<Map<dynamic, dynamic>>;
     for (var v in voices) {
       for (var entry in v.entries) {
         for (var l in ret) {
