@@ -1,18 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:popu_flutter_tts/flutter_tts.dart';
 import 'package:popu_lib_core/popu_lib_core.dart';
+import 'package:popu_lib_prefs/popu_lib_prefs.dart';
+
+class PopuTtsPreferences {
+  static var ttsVoice = PopuStringPreferences('ttsVoice', '');
+}
 
 class PopuTtsService {
   static PopuTtsService instance = PopuTtsService();
 
   String language = "";
-  String? currentVoice;
+  String currentVoice = "";
   FlutterTts? tts;
 
   Future<void> init(String language) async {
     tts = FlutterTts();
     this.language = language;
     await tts?.setLanguage(language);
+    currentVoice = PopuTtsPreferences.ttsVoice.get();
+    Future.delayed(Duration(milliseconds: 200), () => {
+      getVoices().then((voices) => {
+        if (voices.contains(currentVoice)) {
+          changeVoice(currentVoice)
+        } else {
+          currentVoice = ""
+        }
+      })
+    });
   }
 
   Future<List<String>> getVoices() async {
@@ -57,7 +72,11 @@ class PopuTtsService {
   }
 
   void changeVoice(String voice) async {
+    if (voice.isEmpty) {
+      return;
+    }
     currentVoice = voice;
+    PopuTtsPreferences.ttsVoice.set(voice);
     await tts?.setVoice({"name": voice, "locale": language});
   }
 }

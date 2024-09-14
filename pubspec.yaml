@@ -8,6 +8,11 @@ dependencies:
       url: git@github.com:space64-team/popu_lib_core.git
       ref: main
       path: popu_lib_core
+  popu_lib_prefs:
+    git:
+      url: git@github.com:space64-team/popu_lib_prefs.git
+      ref: main
+      path: popu_lib_prefs
   flutter:
     sdk: flutter
   flutter_web_plugins:
