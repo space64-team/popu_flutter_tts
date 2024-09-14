@@ -24,7 +24,7 @@ class PopuTtsService {
         if (voices.contains(currentVoice)) {
           changeVoice(currentVoice)
         } else {
-          currentVoice = ""
+          changeVoice(voices.first)
         }
       })
     });
