@@ -1,9 +1,14 @@
-name: popu_flutter_tts
+name: flutter_tts
 description: A flutter plugin for Text to Speech.  This plugin is supported on iOS, macOS, Android, Web, & Windows.
 version: 4.0.2
 homepage: https://github.com/dlutton/flutter_tts
 
 dependencies:
+  popu_lib_core:
+    git:
+      url: git@github.com:space64-team/popu_lib_core.git
+      ref: main
+      path: popu_lib_core
   flutter:
     sdk: flutter
   flutter_web_plugins:

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:popu_lib_core/popu_lib_core.dart';
 
 import 'flutter_tts.dart';
 
@@ -14,11 +15,23 @@ class PopuTtsService {
 
   Future<List<PopuTtsSupportedLanguage>> getTroubleshootData() async {
     List<PopuTtsSupportedLanguage> ret = [];
-    List<dynamic> languages = await tts?.getLanguages as List<dynamic>;
+    var languages = await tts?.getLanguages as List<dynamic>;
+    PopuLogging.logger.w(languages);
     for (var l in languages) {
       ret.add(PopuTtsSupportedLanguage(l.toString()));
     }
-    ;
+    var voices = await tts?.getVoices as List<Map<dynamic, dynamic>>;
+    PopuLogging.logger.w(voices);
+    for (var v in voices) {
+      for (var entry in v.entries) {
+        for (var l in ret) {
+          if (l.langCode == entry.value.toString()) {
+            l.voices.add(entry.key.toString());
+          }
+        }
+      }
+    }
+    ret.sort((a, b) => a.langCode.compareTo(b.langCode));
     return ret;
   }
 
@@ -29,8 +42,14 @@ class PopuTtsService {
 
 class PopuTtsSupportedLanguage {
   final String langCode;
+  List<String> voices = [];
 
   PopuTtsSupportedLanguage(this.langCode);
+
+  @override
+  String toString() {
+    return "$langCode[ ${voices.join(", ")}]";
+  }
 }
 
 class PopuTtsTroubleshootScreen extends StatefulWidget {
@@ -61,7 +80,7 @@ class _PopuTtsTroubleshootScreenState extends State<PopuTtsTroubleshootScreen> {
             child: ListView(
               padding: const EdgeInsets.all(8),
               children: _data
-                  .map((x) => _buildGridItem(context, x.langCode))
+                  .map((x) => _buildGridItem(context, x.toString()))
                   .toList(),
             )));
   }
