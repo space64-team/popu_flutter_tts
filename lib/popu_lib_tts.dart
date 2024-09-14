@@ -87,21 +87,20 @@ class _PopuTtsTroubleshootScreenState extends State<PopuTtsTroubleshootScreen> {
   void initState() {
     super.initState();
     PopuTtsService.instance.getTroubleshootData().then((v) => {
-      setState(() {
-        _data = v;
-      })
-    });
+          setState(() {
+            _data = v;
+          })
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Tts')),
+        appBar: AppBar(title: const Text('TTS Troubleshoot')),
         body: ListView(
           padding: const EdgeInsets.all(8),
-          children: _data
-              .map((x) => _buildGridItem(context, x.toString()))
-              .toList(),
+          children:
+              _data.map((x) => _buildGridItem(context, x.toString())).toList(),
         ));
   }
 
@@ -137,16 +136,17 @@ class _PopuVoiceChangeDialogState extends State<PopuVoiceChangeDialog> {
   void initState() {
     super.initState();
     PopuTtsService.instance.getVoices().then((x) => {
-      setState(() {
-        _voices = x;
-      })
-    });
+          setState(() {
+            _voices = x;
+          })
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Change Speech Voice'),
+      title: Text(
+          PopuLocalization.localizer.localized(context, 'settingsSpeechVoice')),
       content: SizedBox(
         width: double.maxFinite,
         child: ListView.builder(
