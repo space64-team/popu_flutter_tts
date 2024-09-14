@@ -11,7 +11,9 @@ class PopuTtsService {
   Future<void> init(String language) async {
     tts = FlutterTts();
     await tts?.setLanguage(language);
-    languages = await tts?.getLanguages as List<dynamic>;
+    Future.delayed(const Duration(milliseconds: 500), () async {
+      languages = await tts?.getLanguages as List<dynamic>;
+    });
   }
 
   Future<void> speak(String text) async {
