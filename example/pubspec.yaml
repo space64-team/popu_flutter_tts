@@ -13,7 +13,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_tts:
+  popu_flutter_tts:
     path: ../
 
 dependency_overrides:
