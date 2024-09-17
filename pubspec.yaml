@@ -1,4 +1,4 @@
-name: popu_flutter_tts
+name: flutter_tts
 description: A flutter plugin for Text to Speech.  This plugin is supported on iOS, macOS, Android, Web, & Windows.
 version: 4.0.2
 
