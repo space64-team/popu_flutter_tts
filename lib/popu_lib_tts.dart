@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:popu_flutter_tts/flutter_tts.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:popu_lib_core/popu_lib_core.dart';
 import 'package:popu_lib_prefs/popu_lib_prefs.dart';
 
