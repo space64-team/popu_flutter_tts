@@ -13,8 +13,8 @@ class PopuTtsService {
   bool firstSetup = false;
   String language = "";
   String currentVoice = "";
-  bool hasVoices = false;
   FlutterTts? tts;
+  ValueNotifier<bool> hasVoices = ValueNotifier<bool>(false);
 
   Future<void> init(String language) async {
     tts = FlutterTts();
@@ -34,7 +34,7 @@ class PopuTtsService {
       changeVoice(voices.first);
     }
     if (voices.isNotEmpty) {
-      hasVoices = true;
+      hasVoices.value = true;
     }
     firstSetup = true;
   }
