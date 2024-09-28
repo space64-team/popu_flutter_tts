@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:popu_lib_core/popu_lib_core.dart';
@@ -9,12 +10,14 @@ class PopuTtsPreferences {
 
 class PopuTtsService {
   static PopuTtsService instance = PopuTtsService();
+  static final String _gttsPrefix = "W64";
 
+  final player = AudioPlayer();
   bool firstSetup = false;
   String language = "";
   String currentVoice = "";
   FlutterTts? tts;
-  ValueNotifier<bool> hasVoices = ValueNotifier<bool>(false);
+  ValueNotifier<int> voiceCount = ValueNotifier<int>(0);
 
   Future<void> init(String language) async {
     tts = FlutterTts();
@@ -33,9 +36,7 @@ class PopuTtsService {
     } else if (voices.isNotEmpty) {
       changeVoice(voices.first);
     }
-    if (voices.isNotEmpty) {
-      hasVoices.value = true;
-    }
+    voiceCount.value = voices.length;
     firstSetup = true;
   }
 
@@ -48,6 +49,7 @@ class PopuTtsService {
         ret.add(v['name'].toString());
       }
     }
+    ret.add(language + _gttsPrefix);
     ret.sort((a, b) => a.compareTo(b));
     PopuLogging.logger.w('Voices ${ret.toString()}');
     return ret;
@@ -78,7 +80,13 @@ class PopuTtsService {
 
   Future<void> speak(String text) async {
     await _firstSetup();
-    await tts?.speak(text);
+    if (currentVoice == (language + _gttsPrefix)) {
+      await player.play(UrlSource(
+          "https://translate.google.com/translate_tts?ie=UTF-8&q=${Uri
+              .encodeComponent(text)}&tl=$language&client=tw-ob"));
+    } else {
+      await tts?.speak(text);
+    }
   }
 
   void changeVoice(String voice) async {
@@ -117,11 +125,12 @@ class _PopuTtsTroubleshootScreenState extends State<PopuTtsTroubleshootScreen> {
   @override
   void initState() {
     super.initState();
-    PopuTtsService.instance.getTroubleshootData().then((v) => {
-          setState(() {
-            _data = v;
-          })
-        });
+    PopuTtsService.instance.getTroubleshootData().then((v) =>
+    {
+      setState(() {
+        _data = v;
+      })
+    });
   }
 
   @override
@@ -131,7 +140,7 @@ class _PopuTtsTroubleshootScreenState extends State<PopuTtsTroubleshootScreen> {
         body: ListView(
           padding: const EdgeInsets.all(8),
           children:
-              _data.map((x) => _buildGridItem(context, x.toString())).toList(),
+          _data.map((x) => _buildGridItem(context, x.toString())).toList(),
         ));
   }
 
@@ -166,11 +175,12 @@ class _PopuVoiceChangeDialogState extends State<PopuVoiceChangeDialog> {
   @override
   void initState() {
     super.initState();
-    PopuTtsService.instance.getVoices().then((x) => {
-          setState(() {
-            _voices = x;
-          })
-        });
+    PopuTtsService.instance.getVoices().then((x) =>
+    {
+      setState(() {
+        _voices = x;
+      })
+    });
   }
 
   @override
@@ -186,10 +196,12 @@ class _PopuVoiceChangeDialogState extends State<PopuVoiceChangeDialog> {
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
               title: Text(_voices[index]),
-              trailing: _voices[index] == PopuTtsService.instance.currentVoice ? Icon(
+              trailing: _voices[index] == PopuTtsService.instance.currentVoice
+                  ? Icon(
                 Icons.check, // This is the checkmark icon
                 color: Colors.green, // You can set the color of the checkmark
-              ) : null,
+              )
+                  : null,
               onTap: () {
                 _changeVoice(_voices[index]);
                 Navigator.of(context).pop();
