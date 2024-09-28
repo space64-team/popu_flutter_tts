@@ -81,11 +81,11 @@ class PopuTtsService {
   Future<void> speak(String text) async {
     await _firstSetup();
     if (currentVoice == (language + _gttsPrefix)) {
-      await player.play(UrlSource(
+      player.play(UrlSource(
           "https://simplytranslate.org/api/tts/?engine=google&lang=$language&text=${Uri
-              .encodeComponent(text)}"));
+              .encodeComponent(text)}")).ignore();
     } else {
-      await tts?.speak(text);
+      tts?.speak(text).ignore();
     }
   }
 
