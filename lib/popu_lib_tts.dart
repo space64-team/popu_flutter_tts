@@ -82,8 +82,8 @@ class PopuTtsService {
     await _firstSetup();
     if (currentVoice == (language + _gttsPrefix)) {
       await player.play(UrlSource(
-          "https://translate.google.com/translate_tts?ie=UTF-8&q=${Uri
-              .encodeComponent(text)}&tl=$language&client=tw-ob"));
+          "https://simplytranslate.org/api/tts/?engine=google&lang=$language&text=${Uri
+              .encodeComponent(text)}"));
     } else {
       await tts?.speak(text);
     }
