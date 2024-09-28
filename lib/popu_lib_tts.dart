@@ -10,7 +10,7 @@ class PopuTtsPreferences {
 
 class PopuTtsService {
   static PopuTtsService instance = PopuTtsService();
-  static final String _gttsPrefix = "W64";
+  static final String _gttsSuffix = "_W64";
 
   final player = AudioPlayer();
   bool firstSetup = false;
@@ -49,7 +49,7 @@ class PopuTtsService {
         ret.add(v['name'].toString());
       }
     }
-    ret.add(language + _gttsPrefix);
+    ret.add(language + _gttsSuffix);
     ret.sort((a, b) => a.compareTo(b));
     PopuLogging.logger.w('Voices ${ret.toString()}');
     return ret;
@@ -80,7 +80,7 @@ class PopuTtsService {
 
   Future<void> speak(String text) async {
     await _firstSetup();
-    if (currentVoice == (language + _gttsPrefix)) {
+    if (currentVoice == (language + _gttsSuffix)) {
       player.play(UrlSource(
           "https://simplytranslate.org/api/tts/?engine=google&lang=$language&text=${Uri
               .encodeComponent(text)}")).ignore();
