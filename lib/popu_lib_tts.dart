@@ -31,6 +31,9 @@ class PopuTtsService {
       return;
     }
     var voices = await getVoices();
+    if (voices.length == 1) {
+      PopuAnalytics.logger?.logEvent("tts_noVoiceButGtts");
+    }
     if (voices.contains(currentVoice)) {
       changeVoice(currentVoice);
     } else if (voices.isNotEmpty) {
@@ -81,11 +84,16 @@ class PopuTtsService {
   Future<void> speak(String text) async {
     await _firstSetup();
     if (currentVoice == (language + _gttsSuffix)) {
-      player.play(UrlSource(
-          "https://simplytranslate.org/api/tts/?engine=google&lang=$language&text=${Uri
-              .encodeComponent(text)}")).ignore();
+      player
+          .play(UrlSource(
+              "https://simplytranslate.org/api/tts/?engine=google&lang=$language&text=${Uri.encodeComponent(text)}"))
+          .catchError((e) {
+        PopuAnalytics.logger?.logEvent("ttsError_gtts");
+      });
     } else {
-      tts?.speak(text).ignore();
+      tts?.speak(text).catchError((e) {
+        PopuAnalytics.logger?.logEvent("ttsError_stts");
+      });
     }
   }
 
@@ -125,12 +133,11 @@ class _PopuTtsTroubleshootScreenState extends State<PopuTtsTroubleshootScreen> {
   @override
   void initState() {
     super.initState();
-    PopuTtsService.instance.getTroubleshootData().then((v) =>
-    {
-      setState(() {
-        _data = v;
-      })
-    });
+    PopuTtsService.instance.getTroubleshootData().then((v) => {
+          setState(() {
+            _data = v;
+          })
+        });
   }
 
   @override
@@ -140,7 +147,7 @@ class _PopuTtsTroubleshootScreenState extends State<PopuTtsTroubleshootScreen> {
         body: ListView(
           padding: const EdgeInsets.all(8),
           children:
-          _data.map((x) => _buildGridItem(context, x.toString())).toList(),
+              _data.map((x) => _buildGridItem(context, x.toString())).toList(),
         ));
   }
 
@@ -175,12 +182,11 @@ class _PopuVoiceChangeDialogState extends State<PopuVoiceChangeDialog> {
   @override
   void initState() {
     super.initState();
-    PopuTtsService.instance.getVoices().then((x) =>
-    {
-      setState(() {
-        _voices = x;
-      })
-    });
+    PopuTtsService.instance.getVoices().then((x) => {
+          setState(() {
+            _voices = x;
+          })
+        });
   }
 
   @override
@@ -198,9 +204,10 @@ class _PopuVoiceChangeDialogState extends State<PopuVoiceChangeDialog> {
               title: Text(_voices[index]),
               trailing: _voices[index] == PopuTtsService.instance.currentVoice
                   ? Icon(
-                Icons.check, // This is the checkmark icon
-                color: Colors.green, // You can set the color of the checkmark
-              )
+                      Icons.check, // This is the checkmark icon
+                      color: Colors
+                          .green, // You can set the color of the checkmark
+                    )
                   : null,
               onTap: () {
                 _changeVoice(_voices[index]);
@@ -214,6 +221,7 @@ class _PopuVoiceChangeDialogState extends State<PopuVoiceChangeDialog> {
   }
 
   void _changeVoice(String voice) {
+    PopuAnalytics.logger?.logEvent("ttsVoiceChange_$voice");
     PopuTtsService.instance.changeVoice(voice);
   }
 }
