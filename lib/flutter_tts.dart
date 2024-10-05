@@ -372,7 +372,7 @@ class FlutterTts {
 
   /// [Future] which invokes the platform specific method for setLanguage
   Future<dynamic> setLanguage(String language) async =>
-      await _channel.invokeMethod('setLanguage', language);
+      await _channel.invokeMethod('setLanguage', language).catchError((e) {});
 
   /// [Future] which invokes the platform specific method for setSpeechRate
   /// Allowed values are in the range from 0.0 (slowest) to 1.0 (fastest)
@@ -462,7 +462,7 @@ class FlutterTts {
   /// [Future] which invokes the platform specific method for setVoice
   /// ***Android, iOS, and macOS supported only***
   Future<dynamic> setVoice(Map<String, String> voice) async =>
-      await _channel.invokeMethod('setVoice', voice);
+      await _channel.invokeMethod('setVoice', voice).catchError((e) {});
 
   /// [Future] which resets the platform voice to the default
   Future<dynamic> clearVoice() async =>
