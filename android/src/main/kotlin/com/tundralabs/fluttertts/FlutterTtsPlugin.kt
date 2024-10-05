@@ -492,6 +492,9 @@ class FlutterTtsPlugin : MethodCallHandler, FlutterPlugin {
     }
 
     private fun setVoice(voice: HashMap<String?, String>, result: Result) {
+        if (tts == null || tts!!.voices == null) {
+            return
+        }
         for (ttsVoice in tts!!.voices) {
             if (ttsVoice.name == voice["name"] && ttsVoice.locale
                     .toLanguageTag() == voice["locale"]
