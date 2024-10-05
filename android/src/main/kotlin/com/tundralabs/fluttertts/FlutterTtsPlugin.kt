@@ -536,16 +536,20 @@ class FlutterTtsPlugin : MethodCallHandler, FlutterPlugin {
     private fun getVoices(result: Result) {
         val voices = ArrayList<HashMap<String, String>>()
         try {
-            for (voice in tts!!.voices) {
-                val voiceMap = HashMap<String, String>()
-                voiceMap["name"] = voice.name
-                voiceMap["locale"] = voice.locale.toLanguageTag()
-                voices.add(voiceMap)
+            if (tts == null || tts!!.voices == null) {
+                result.success(voices)
+            } else {
+                for (voice in tts!!.voices) {
+                    val voiceMap = HashMap<String, String>()
+                    voiceMap["name"] = voice.name
+                    voiceMap["locale"] = voice.locale.toLanguageTag()
+                    voices.add(voiceMap)
+                }
+                result.success(voices)
             }
-            result.success(voices)
         } catch (e: NullPointerException) {
             Log.d(tag, "getVoices: " + e.message)
-            result.success(null)
+            result.success(voices)
         }
     }
 
