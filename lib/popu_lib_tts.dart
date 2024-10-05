@@ -44,8 +44,12 @@ class PopuTtsService {
   }
 
   Future<List<String>> getVoices() async {
-    var vRaw = await tts?.getVoices;
-    var voices = vRaw as List<dynamic>;
+    List<dynamic> voices = [];
+    await tts?.getVoices.then((v) => {
+      voices = v as List<dynamic>
+    }).catchError((e) => {
+      voices = []
+    });
     List<String> ret = [];
     for (var v in voices) {
       if (v['locale'] == language) {
