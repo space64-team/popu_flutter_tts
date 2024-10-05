@@ -22,7 +22,8 @@ class PopuTtsService {
   Future<void> init(String language) async {
     tts = FlutterTts();
     this.language = language;
-    await tts?.setLanguage(language);
+    await tts?.setLanguage(language).catchError((e) {
+    });
     currentVoice = PopuTtsPreferences.ttsVoice.get();
   }
 
@@ -107,7 +108,9 @@ class PopuTtsService {
     }
     currentVoice = voice;
     PopuTtsPreferences.ttsVoice.set(voice);
-    await tts?.setVoice({"name": voice, "locale": language});
+    await tts?.setVoice({"name": voice, "locale": language}).catchError((e) {
+
+    });
   }
 }
 
