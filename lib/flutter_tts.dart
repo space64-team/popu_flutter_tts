@@ -515,7 +515,9 @@ class FlutterTts {
   /// [Future] which invokes the platform specific method for isLanguageAvailable
   /// Returns `true` or `false`
   Future<dynamic> isLanguageAvailable(String language) async =>
-      await _channel.invokeMethod('isLanguageAvailable', language);
+      await _channel.invokeMethod('isLanguageAvailable', language).catchError((e) {
+        return false;
+      });
 
   /// [Future] which invokes the platform specific method for isLanguageInstalled
   /// Returns `true` or `false`
