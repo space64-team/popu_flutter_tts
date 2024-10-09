@@ -89,6 +89,7 @@ class PopuTtsService {
   Future<void> speak(String text) async {
     await _firstSetup();
     if (currentVoice == (language + _gttsSuffix)) {
+      PopuAnalytics.logger?.setCrashlyticsKey("ttsUsage", "gtts");
       player
           .play(UrlSource(
               "https://simplytranslate.org/api/tts/?engine=google&lang=$language&text=${Uri.encodeComponent(text)}"))
@@ -96,6 +97,7 @@ class PopuTtsService {
         PopuAnalytics.logger?.logEvent("ttsError_gtts");
       });
     } else {
+      PopuAnalytics.logger?.setCrashlyticsKey("ttsUsage", "stts");
       tts?.speak(text).catchError((e) {
         PopuAnalytics.logger?.logEvent("ttsError_stts");
       });
